@@ -1,12 +1,7 @@
 # library(ggplot2)
 # library(dplyr)
-# 
-load("../normalsubjects/calcNV.Rda")
-load("../normalsubjects/percentilesNV.Rda")
-load("../flickerbox2/presets2.rda")
+#
 
-#source('getResultFileList.R')
-#source('resultFileL4S.R')
 
 ##### This script defines a class resultList with several methods to extract data from it, #####
 # further analysis is done using methods derived from functional programming
@@ -33,14 +28,14 @@ load("../flickerbox2/presets2.rda")
 # loads examinations files from a path and creates an object resultList
 
 resultList <- function(pfad = ".") {
-  
+
   getResultFileList <-function (pfad=".") {
     # Return a list of result files in the directory path
     dname <- paste("_O([[:upper:]]{1})_201([[:digit:]]{1})-([[:digit:]]{2})-([[:digit:]]{2})_([[:alnum:]]*)\\.txt",sep="")
     dateien <- list.files(path=pfad,pattern=dname)
     return(dateien)
   }
-  
+
   dateien <- getResultFileList(pfad)
   if (length(dateien) == 0) {
     warning(paste("No data in folder \"", pfad, "\"", sep = ""))
@@ -48,14 +43,14 @@ resultList <- function(pfad = ".") {
     class(erg) <- "resultListL4S"
     return(erg)
   }
-  
+
   erg <- list()
-  
+
   for (i in 1:length(dateien)) {
     fname <- normalizePath(paste(pfad, dateien[i], sep = "/"))
     erg[[i]] <- resultFile(fname, presets)
   }
-  
+
   class(erg) <- append(class(erg), "resultList")
   return(erg)
 }
@@ -68,28 +63,28 @@ responseList <- function(x) UseMethod("responseList")
 responseList.default <- function(x) print("Method not available for this object.")
 
 responseList.character <- function (pfad = ".") {
-  
+
   pfad %>%
     resultList() %>%
-    responseList.resultList()  
-  
+    responseList.resultList()
+
 }
 
 responseList.resultList <- function(resultList) {
-  
+
   replaceInf <- 300 # Sensitivity that is assumed at zero contrast, just to show these responses also
-  
+
   qualityTab <- lapply(resultList, function (x) { rbind(getSeen(x), getNotSeen(x)) })
   qualityTab <- do.call(rbind.data.frame, qualityTab)
-  
+
   qualityTab <-
     qualityTab %>%
     mutate(Sensitivity = ifelse(Sensitivity == Inf, replaceInf, Sensitivity) )
 
   class(qualityTab) <- append(class(qualityTab), "responseList")
-  
+
   qualityTab
-  
+
 }
 
 ##### sensitivityList #####
@@ -98,23 +93,23 @@ responseList.resultList <- function(resultList) {
 sensitivityList <- function(x) UseMethod("sensitivityList")
 
 sensitivityList.default <- function(x) {
-  
+
   print("Constructor sensitivityList: method not available for this method.")
   print(class(x))
-  
+
 }
 
 sensitivityList.character <- function(pfad = ".") {
-  
+
   pfad %>%
     resultList() %>%
     sensitivityList()
-  
+
 }
 
 sensitivityList.resultList <- function(resultList) {
-  
-  tab <- lapply(resultList, function (x) { data.frame(basics = getBasics(x), 
+
+  tab <- lapply(resultList, function (x) { data.frame(basics = getBasics(x),
                                                type = x$type,
                                                frequency = x$frequency,
                                                sensitivity = x$sensitivity,
@@ -124,11 +119,11 @@ sensitivityList.resultList <- function(resultList) {
                                                term = x$terminationStatus) })
   tab <- do.call(rbind.data.frame, tab)
   tab <- tab[order(tab$type, tab$frequency), ]
-  
+
   class(tab) <- append(class(tab), "sensitivityList")
-  
+
   return(tab)
-  
+
 }
 
 ##### Functions to modify sensitivityLists #####
@@ -139,24 +134,24 @@ setToGamut.default <- function(x) {
   print("Not a sensitivityList!")
 }
 
-setToGamut.sensitivityList <- function(slist, 
-                                       types = c("L", "M", "S", "R"), 
-                                       frequencies = c(1, 2, 4, 6, 8, 10, 12, 16, 20, 28)) 
+setToGamut.sensitivityList <- function(slist,
+                                       types = c("L", "M", "S", "R"),
+                                       frequencies = c(1, 2, 4, 6, 8, 10, 12, 16, 20, 28))
 {
-  
-  output <- 
+
+  output <-
   slist %>%
-    mutate(setToGamut = (type %in% types) & 
+    mutate(setToGamut = (type %in% types) &
              (frequency %in% frequencies) &
              (is.na(sensitivity)),
-           sensitivity = ifelse(setToGamut, 
+           sensitivity = ifelse(setToGamut,
                                 1 / maxContrast,
                                 sensitivity)
-    ) 
+    )
   class(output) <- append(class(output), "sensitivityList")
-  
+
   output
-  
+
 }
 
 # removes NAs if valid measurements are available for this condition
@@ -169,8 +164,8 @@ removeDuplicateNA.default <- function(x) {
 }
 
 removeDuplicateNA.sensitivityList <- function(slist) {
-  
-  output <- 
+
+  output <-
     slist %>%
     group_by(frequency, type) %>%
     mutate(dplct = n() > 1,
@@ -180,9 +175,9 @@ removeDuplicateNA.sensitivityList <- function(slist) {
     filter(!(isNA & dplct & validMeas)) %>%
     select(-dplct, -isNA, -validMeas) %>%
     data.frame()
-  
+
   class(output) <- append(class(output), "sensitivityList")
-  
+
   output
 }
 
@@ -195,13 +190,13 @@ removeNA.default <- function(x, rType, rFrequency) {
 }
 
 removeNA.sensitivityList <- function(slist, rType, rFrequency) {
-  
+
   output <-
     slist %>%
     filter(!((type == rType) & (frequency == rFrequency) & is.na(sensitivity)))
-  
+
   class(output) <- append(class(output), "sensitivityList")
-  
+
   output
 }
 
@@ -214,31 +209,31 @@ setToMean.default <- function(x, rType, rFrequency) {
 }
 
 setToMean.sensitivityList <- function(slist, rType, rFrequency) {
-  
-  modify <- 
+
+  modify <-
     slist %>%
     filter(type == rType, frequency == rFrequency) %>%
     summarize(meanSens = mean(sensitivity))
 
-  output <- 
+  output <-
     slist %>%
     group_by(type, frequency) %>%
     mutate(nMeas = row_number(),
            meanSens = mean(sensitivity),
-           sensitivity = if_else((type == rType) & 
+           sensitivity = if_else((type == rType) &
                                    (frequency == rFrequency) &
                                    (nMeas == 1),
                                  meanSens,
                                  sensitivity)
     ) %>%
-    filter(!((type == rType) & 
+    filter(!((type == rType) &
                (frequency == rFrequency) &
                (nMeas > 1))) %>%
     select(-nMeas, -meanSens) %>%
     ungroup()
-  
+
   class(output) <- append(class(output), "sensitivityList")
-  
+
   output
 }
 
@@ -251,36 +246,36 @@ completeList.default <- function(x, rType, maxFreq = NA) {
 }
 
 completeList.sensitivityList <- function(slist, rType, maxFreq = NA) {
-  
+
   if (is.na(maxFreq)) maxFreq <- max(slist$frequency)
   if (maxFreq > 36) maxFreq <- 36
-  
-  availableFrequencies <- 
-    slist %>% 
-    filter(type == rType) %>% 
+
+  availableFrequencies <-
+    slist %>%
+    filter(type == rType) %>%
     select(frequency) %>%
     unlist %>%
     as.vector
-  
+
   carryOver <-
     slist %>%
     filter(type == rType) %>%
     summarize(maxContrast = first(maxContrast),
               basics.subject = first(basics.subject),
               basics.eye = first(basics.eye))
-  
-  addFreq <- 
+
+  addFreq <-
     data.frame(type = rType,
                frequency = c(1, 2, 4, 6, 8, 10, 12, 16, 20, 28, 36),
                carryOver,
-               term = -1) %>% 
+               term = -1) %>%
     filter(frequency <= maxFreq,
            !(frequency %in% availableFrequencies))
-  
+
   output <- full_join(addFreq, slist)
-  
+
   class(output) <- append(class(output), "sensitivityList")
-  
+
   return(output)
 
 }
@@ -288,20 +283,20 @@ completeList.sensitivityList <- function(slist, rType, maxFreq = NA) {
 ##### plotResults #####
 
 plot.sensitivityList <- function(slist) {
-  
+
   slist %>%
     filter(!is.na(sensitivity)) %>%
-    ggplot(aes(x = frequency, y = sensitivity)) + 
+    ggplot(aes(x = frequency, y = sensitivity)) +
     geom_line(aes(group = 1)) +
     geom_point(aes(shape = factor(term))) +
-    scale_x_log10() + 
+    scale_x_log10() +
     scale_y_log10() +
     facet_wrap(~ factor(type, levels = c("L", "M", "S", "R")))
-  
+
 }
 
 plot.resultList <- function(rlist) {
-  
+
   rlist %>%
     sensitivityList %>%
     plot
@@ -311,10 +306,10 @@ plot.resultList <- function(rlist) {
 ##### getInfo() #####
 
 summary.resultList <- function(resultList) {
-  
+
   info <- list()
-  
-  infoList <- 
+
+  infoList <-
     lapply(resultList, function(x) data.frame(getBasics(x))) %>%
     do.call("rbind.data.frame", .)
 
@@ -352,10 +347,10 @@ defectList.default <- function(x, age, maxAge) {
 }
 
 defectList.sensitivityList <- function(slist, age = NA, maxAge = NA) {
-  
+
   if (is.na(age)) stop("Cannot calculate loss without age!")
-  
-  output <- 
+
+  output <-
     slist %>%
     mutate(logSens = log10(sensitivity),
            type = as.character(type),
@@ -368,14 +363,14 @@ defectList.sensitivityList <- function(slist, age = NA, maxAge = NA) {
            nvMaxAge = calcNV(maxAge, type, frequency),
            dynamicRange = -10 * (nvMaxAge - minSens)
     )
-  
+
   class(output) <-
     class(output) %>%
     append("sensitivityList") %>%
-    append("defectList") 
-  
+    append("defectList")
+
   output
-    
+
 }
 
 ##### class probabilityList #####
@@ -387,28 +382,28 @@ probabilityList.default <- function(x, age) {
 }
 
 probabilityList.sensitivityList <- function(slist, age = NA) {
-  
+
   if (is.na(age)) stop("Cannot calculate probability without age!")
-  
+
   inInterval <- function(values, Type, Frequency) {
-    
+
     if (Frequency > 20) {
       warning("probabilityList: frequency too high!")
       print(Type)
       return(NA)
     }
-    
-    output <- findInterval(values, 
-                 NVprobsSmooth %>% 
-                   filter(frequency == Frequency, type == Type) %>% 
+
+    output <- findInterval(values,
+                 NVprobsSmooth %>%
+                   filter(frequency == Frequency, type == Type) %>%
                    select(p010:p990))
 
-    
+
     output
   }
-  
+
   inInterval <- Vectorize(inInterval)
-  
+
   output <-
     slist %>%
     mutate(logSens = log10(sensitivity),
@@ -417,14 +412,14 @@ probabilityList.sensitivityList <- function(slist, age = NA) {
            loss = -10 * (nv - logSens),
            interval  = inInterval(loss, type, frequency)
     )
-  
+
   class(output) <-
     class(output) %>%
     append("sensitivityList") %>%
-    append("probabilityList") 
-  
+    append("probabilityList")
+
   output
-  
+
 }
 
 ##### MD #####
@@ -449,17 +444,17 @@ calcMD.defectList <- function(dlist, frequencies = c(1, 2, 4, 6, 8, 10, 12, 16, 
               eye = first(basics.eye),
               md = mean(loss)) %>%
     ungroup()
-  
+
   output <- left_join(data.frame(type = c("L", "M", "S", "R")), output)
-  
+
   outputTransposed <- data.frame(t(output$md))
   names(outputTransposed) <- t(output$type)
   outputTransposed <- data.frame(patid = first(output$patid),
                                  eye = first(output$eye),
                                  outputTransposed)
-  
+
   outputTransposed
-  
+
 }
 
 ##### Plots a loss diagramme #####
@@ -471,7 +466,7 @@ visugramme.default <- function(x, age, maxAge = NA) {
 }
 
 visugramme.sensitivityList <- function(slist, age, maxAge = NA) {
-  
+
   thresholdTable <-
     slist %>%
     ungroup() %>%
@@ -482,18 +477,18 @@ visugramme.sensitivityList <- function(slist, age, maxAge = NA) {
            minSens = log10(1 / maxContrast),
            maxLoss = -10 * (nv - minSens)
     )
-  
+
   normValues <- NVprobsSmooth %>%
     filter(type %in% unique(thresholdTable$type))
-  
+
   ggplot(thresholdTable, aes(x = frequency)) +
     geom_line(aes(y = loss, group = 1), size = 2) +
     geom_point(aes(y = loss, shape = factor(term)), size = 2) +
     geom_ribbon(aes(ymax = maxLoss, ymin = -15), alpha = .5) +
-    
+
     scale_x_log10("Frequency [Hz]", breaks = c(1, 2, 4, 8, 28), limits = c(1, 28)) +
     scale_y_continuous("Sensitivity loss [dB]", limits = c(-15, 5)) +
-    
+
     geom_ribbon(data = normValues, aes(x = frequency, ymin = p100, ymax = p900), alpha = .1) +
     geom_line(data = normValues, aes(x = frequency, y = p500)) +
     facet_wrap(~ type) +
@@ -501,21 +496,21 @@ visugramme.sensitivityList <- function(slist, age, maxAge = NA) {
 }
 
 visugramme.resultList <- function (resultList, age, maxAge = NA) {
-  
+
   resultList %>%
     sensitivityList %>%
     visugramme.sensitivityList(age, maxAge = NA)
-  
+
 }
 
 vg_gamut <- function(age) {
   geom_ribbon(data = normValues, aes(x = frequency, ymin = p10, ymax = p90), alpha = .1) +
     geom_line(data = normValues, aes(x = frequency, y = p50))
-  
+
 }
 
 vg_boxplot <- function(resultList, age) {
-  
+
   boxplotTable <-
     resultList %>%
     responseList() %>%
@@ -524,14 +519,14 @@ vg_boxplot <- function(resultList, age) {
            type = as.character(type),
            nv = calcNV(age, type, frequency),
            loss = -10 * (nv - logSens))
-  
+
   geom_boxplot(data = boxplotTable,
                aes(x = as.numeric(frequency),
                    y = loss,
                    group = paste(as.character(frequency), answer),
                    color = answer),
                alpha = .1)
-  
+
 }
 
 ##### plotLM() #####
@@ -549,7 +544,7 @@ plotLM.sensitivityList <- function(sList) {
     arrange(frequency, type) %>%
     group_by(frequency) %>%
     summarize(ratioLM = first(sensitivity) / last(sensitivity))
-  
+
   ggplot(tabLM, aes(x = frequency, y = ratioLM)) +
     geom_smooth() +
     geom_point() +
@@ -561,10 +556,10 @@ plotLM.resultList <- function(rList) {
     sensitivityList() %>%
     plotLM()
 }
-  
 
-  
 
-  
+
+
+
 
 
