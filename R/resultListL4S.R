@@ -1,7 +1,5 @@
-# library(ggplot2)
-# library(dplyr)
-#
-
+#' @import dplyr
+#' @import ggplot2
 
 ##### This script defines a class resultList with several methods to extract data from it, #####
 # further analysis is done using methods derived from functional programming
