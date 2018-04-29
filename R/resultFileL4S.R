@@ -3,7 +3,6 @@
 #' @param presets presets that are used for identifying conditions and calculating sensitivities
 #' @return an object of the type "resultFile"
 #' @export
-#' @import dplyr
 
 resultFile <- function(name, presets) {
 
