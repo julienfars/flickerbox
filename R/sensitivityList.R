@@ -1,23 +1,38 @@
 #' Creates a sensitivity list from raw data
+#' @param x either a string containing a path or a resultList-object
+#' @seealso sensitivityList.character, sensitivityList.resultList
 #' @export
-#' @import dplyr
 sensitivityList <- function(x) UseMethod("sensitivityList")
 
+#' Creates a sensitivity list from raw data
+#' @param x any object
+#' @details objects with a class other than character or resultList result only in a message that there is no method "sensitivityList" for this class.
+#' @export
 sensitivityList.default <- function(x) {
 
-  print("Constructor sensitivityList: method not available for this method.")
+  print("Constructor sensitivityList: method not available for this class.")
   print(class(x))
 
 }
 
-sensitivityList.character <- function(pfad = ".") {
+#' Creates a sensitivity list from raw data
+#' @param path directory containing a number of txt-files with temporal contrast sensitivity measurements
+#' @export
+sensitivityList.character <- function(path = ".") {
 
-  pfad %>%
+  path %>%
     resultList() %>%
     sensitivityList()
 
 }
 
+#' Creates a sensitivity list from raw data
+#' @param resultList an object of class resultList
+#' @export
+#' @examples
+#' rl <- resultList(".")
+#' sl <- sensitivityList(rl)
+#' print(sl)
 sensitivityList.resultList <- function(resultList) {
 
   tab <- lapply(resultList, function (x) { data.frame(basics = getBasics(x),

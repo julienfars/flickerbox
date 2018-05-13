@@ -22,6 +22,11 @@
 ##### Contstructor #####
 # loads examinations files from a path and creates an object resultList
 
+#' Loads examinations files from a path and creates an object resultList
+#' @param path path that contains multiple resultFile files
+#' @return an object of the type "resultList"
+#' @export
+
 resultList <- function(pfad = ".") {
 
   getResultFileList <-function (pfad=".") {
@@ -53,6 +58,7 @@ resultList <- function(pfad = ".") {
 ##### class responseList #####
 # extracts the single responses from a result list
 
+#' @export
 responseList <- function(x) UseMethod("responseList")
 
 responseList.default <- function(x) print("Method not available for this object.")
