@@ -4,7 +4,7 @@
 \alias{resultFile}
 \title{Read a single result file}
 \usage{
-resultFile(name, presets)
+resultFile(name, presets = flickerbox::presets)
 }
 \arguments{
 \item{name}{name of the file}
@@ -15,5 +15,9 @@ resultFile(name, presets)
 an object of the type "resultFile"
 }
 \description{
-Read a single result file
+Use this function to read a single result file. Such a file contains all stimuli presented, the corresponding answers, and two thresholds. One threshold is from the up-, the other one from the down-staircase).
+}
+\examples{
+# Get the maximal possible contrast at the photoreceptor level for this measurement (instrument gamut)
+maxContrast <- resultFile("pathToFile")$maxContrast
 }

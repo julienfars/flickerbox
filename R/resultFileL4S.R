@@ -1,26 +1,37 @@
 #' Read a single result file
+#'
+#' Use this function to read a single result file. Such a file contains all stimuli presented, the corresponding answers, and two thresholds. One threshold is from the up-, the other one from the down-staircase).
 #' @param name name of the file
 #' @param presets presets that are used for identifying conditions and calculating sensitivities
 #' @return an object of the type "resultFile"
+#' @examples
+#' # Get the maximal possible contrast at the photoreceptor level for this measurement (instrument gamut)
+#' maxContrast <- resultFile("pathToFile")$maxContrast
+#' @importFrom dplyr select
 #' @export
 
-resultFile <- function(name, presets) {
-
+resultFile <- function(name, presets = flickerbox::presets) {
   # Define constants
-
   modulation <- 1:4
   phase <- 5:8
-  zero <- rep(0,4)
+  zero <- rep(0, 4)
   type <- NA
   treatNA = "keep"
 
   # Read a result file
-  rt <- read.table(name, skip = 4, sep = ";", dec = ",", fill = T) %>%
-    select(-7, -12)
+  rt <-
+    read.table(
+      name,
+      skip = 4,
+      sep = ";",
+      dec = ",",
+      fill = T
+    ) %>%
+    select(-7,-12)
 
   # Read contrasts
 
-  kontraste <- rt[rt[, 1]=="Delta Kontrast SC1", 3:10]
+  kontraste <- rt[rt[, 1] == "Delta Kontrast SC1", 3:10]
 
   if (sum(kontraste[1:4]) == 0) {
     kontraste <- kontraste[5:8]
@@ -28,12 +39,12 @@ resultFile <- function(name, presets) {
     kontraste <- kontraste[1:4]
   }
 
-  Kontrast100 <- which.max(rt[rt$V1 == "Kontrast SC1", ])
+  Kontrast100 <- which.max(rt[rt$V1 == "Kontrast SC1",])
 
   # Determine frequency
 
   freq <- rt[which(grepl("Frequenz", rt[, 1])),
-             which.max(rt[rt$V1 == "Kontrast SC1", ])]
+             which.max(rt[rt$V1 == "Kontrast SC1",])]
 
   # Determine photoreceptor type
 
@@ -43,20 +54,21 @@ resultFile <- function(name, presets) {
     }
   }
 
-  if(is.na(type)) {
+  if (is.na(type)) {
     warning("Cannot determine photoreceptor type.")
   }
 
   # Determine LED contrasts at threshold
 
-  if(is.na(type)) {
+  if (is.na(type)) {
     maxContrast <- NA
   } else {
     maxContrast <- presets[presets$X == "K", type]
   }
 
-  thresholdsLED <- rbind(D = rt[which(grepl("Down: Schwelle", rt[, 1])), 3:6],
-                         U = rt[which(grepl("Up: Schwelle", rt[, 1])), 3:6])
+  thresholdsLED <-
+    rbind(D = rt[which(grepl("Down: Schwelle", rt[, 1])), 3:6],
+          U = rt[which(grepl("Up: Schwelle", rt[, 1])), 3:6])
 
   if (nrow(thresholdsLED) == 0) {
     warning("No staircase terminated.")
@@ -72,13 +84,22 @@ resultFile <- function(name, presets) {
     termination.status <- nrow(thresholdsLED)
   }
 
-  thresholdsPR <- data.frame(thresholdsLED, apply(thresholdsLED, 1, max) * maxContrast / 100)
-  sensitivities <- data.frame(thresholdsPR, Sensitivity = 1 / thresholdsPR[, 5], term = termination.status)
+  thresholdsPR <-
+    data.frame(thresholdsLED, apply(thresholdsLED, 1, max) * maxContrast / 100)
+  sensitivities <-
+    data.frame(thresholdsPR,
+               Sensitivity = 1 / thresholdsPR[, 5],
+               term = termination.status)
 
-  names(sensitivities) <- c("red", "green", "blue", "cyan",
-                            paste("contrast:", type),
-                            paste("sensitivity:", type),
-                            "Term")
+  names(sensitivities) <- c(
+    "red",
+    "green",
+    "blue",
+    "cyan",
+    paste("contrast:", type),
+    paste("sensitivity:", type),
+    "Term"
+  )
 
   notSeen <- rt[, 2] == "nicht gesehen"
   seen <- rt[, 2] == "gesehen"
