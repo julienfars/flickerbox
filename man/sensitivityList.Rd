@@ -6,12 +6,6 @@
 \usage{
 sensitivityList(x)
 }
-\arguments{
-\item{x}{either a string containing a path or a resultList-object}
-}
 \description{
 Creates a sensitivity list from raw data
-}
-\seealso{
-sensitivityList.character, sensitivityList.resultList
 }
