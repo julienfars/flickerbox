@@ -1,9 +1,9 @@
 Package: flickerbox
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Functions for creating stimuli and analyzing results for a 4-channel-LED-stimulator
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Author: Cord Huchzermeyer
+Maintainer: Cord Huchzermeyer <huchzi@email.de>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
