@@ -27,7 +27,7 @@ resultFile <- function(name, presets = flickerbox::presets) {
       dec = ",",
       fill = T
     ) %>%
-    select(-7,-12)
+    dplyr::select(-7,-12)
 
   # Read contrasts
 
