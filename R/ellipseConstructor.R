@@ -11,6 +11,11 @@
 
 ellipseConstructor <- function(path = ".")
 {
+  getM <- function(type_string) { return(flickerbox::Mkey[[type_string]]) }
+  getM <- Vectorize(getM)
+  getL <- function(type_string) { return(flickerbox::Lkey[[type_string]]) }
+  getL <- Vectorize(getL)
+
   t1 <- sensitivityList(flickerbox::resultList(path))
 
   ellipse <- dplyr::filter(t1, C100 <= 100)
