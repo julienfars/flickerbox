@@ -7,7 +7,6 @@
 #' @examples
 #' # Get the maximal possible contrast at the photoreceptor level for this measurement (instrument gamut)
 #' maxContrast <- resultFile("pathToFile")$maxContrast
-#' @importFrom dplyr select
 #' @export
 
 resultFile <- function(name, presets = flickerbox::presets) {

@@ -20,8 +20,8 @@ probabilityList.sensitivityList <- function(slist, age = NA) {
 
     output <- findInterval(values,
                            NVprobsSmooth %>%
-                             filter(frequency == Frequency, type == Type) %>%
-                             select(p010:p990))
+                             dplyr::filter(frequency == Frequency, type == Type) %>%
+                             dplyr::select(p010:p990))
 
 
     output

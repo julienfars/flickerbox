@@ -39,13 +39,13 @@ removeDuplicateNA.sensitivityList <- function(slist) {
 
   output <-
     slist %>%
-    group_by(frequency, type) %>%
-    mutate(dplct = n() > 1,
+    dplyr::group_by(frequency, type) %>%
+    dplyr::mutate(dplct = n() > 1,
            isNA = is.na(sensitivity),
            validMeas = !min(isNA)) %>%
     ungroup %>%
-    filter(!(isNA & dplct & validMeas)) %>%
-    select(-dplct, -isNA, -validMeas) %>%
+    dplyr::filter(!(isNA & dplct & validMeas)) %>%
+    dplyr::select(-dplct, -isNA, -validMeas) %>%
     data.frame()
 
   class(output) <- append(class(output), "sensitivityList")
