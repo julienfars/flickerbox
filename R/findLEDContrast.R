@@ -19,6 +19,17 @@
 #' @export
 
 findLEDContrasts <- function(pursuedContr, lmean, ConeFund, maxContrast = T) {
+
+  if (length(intersect(c("rod", "scone", "mcone", "lcone"), names(pursuedContr))) < 4)
+    stop("Please name photoreceptors in pursuedContr!")
+  else
+    pursuedContr <- pursuedContr[c("rod", "scone", "mcone", "lcone")]
+
+  if (length(intersect(c("red", "green", "blue", "cyan"), names(lmean))) < 4)
+    stop("Please name LEDs in lmean!")
+  else
+    lmean <- lmean[c("red", "green", "blue", "cyan")]
+
   ## calculate receptor catch for every LED -> 4x4 matrix
   CF <- crossprod(as.matrix(LED1[, 2:5]), as.matrix(ConeFund))
 
