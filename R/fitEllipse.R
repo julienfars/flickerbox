@@ -1,3 +1,12 @@
+#' Fits an ellipse model to data from getPhotoreceptorCoordinates
+#'
+#' @examples
+#' \dontrun{
+#' getPhotoreceptorCoordinates(path, ConeFundamentals10) %>%
+#'  filter(patid == 1, seye == "OD", frequency == 2) %>%
+#'  fitEllipse() %>%
+#'  plotEllipse()
+#' }
 #' @export
 fitEllipse <- function(photoreceptorCoordinates,
                      x = "lcone",
