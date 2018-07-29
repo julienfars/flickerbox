@@ -43,11 +43,11 @@ plotEllipse <- function(ellipseModel) {
       )
     }
 
-    xr2 <- c(xr, -xr)
-    yr2 <- c(yr, -yr)
+    xr2 <- c(xr, -rev(xr))
+    yr2 <- c(yr, -rev(yr))
     output <-
       output +
-      ggplot2::geom_line(ggplot2::aes(x = xr2, y = yr2), color = "red")
+      ggplot2::geom_path(ggplot2::aes(x = xr2, y = yr2), color = "red")
 
   print(output)
 
