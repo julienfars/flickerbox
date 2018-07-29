@@ -1,27 +1,30 @@
 #' @export
-fitModel <- function(ellipse, freq, a1 = 1, a2 = 1, alpha = 1) {
-
-  xvalues <- c(ellipse[ellipse$frequency == freq, "X"])
-  yvalues <- c(ellipse[ellipse$frequency == freq, "Y"])
+fitEllipse <- function(photoreceptorCoordinates,
+                     x = "lcone",
+                     y = "mcone",
+                     a1 = 1,
+                     a2 = 1,
+                     alpha = 1)
+{
+  xvalues <- photoreceptorCoordinates[, x]
+  yvalues <- photoreceptorCoordinates[, y]
 
   k <- yvalues / xvalues
   xtimesy <- sqrt(xvalues ^ 2 + yvalues ^ 2)
 
   model <- minpack.lm::nlsLM(
     xtimesy ~ ellipseFunction(k, a1, a2, alpha),
-    start = list(
-      a1 = a1,
-      a2 = a2,
-      alpha = alpha
-    ),
+    start = list(a1 = a1,
+                 a2 = a2,
+                 alpha = alpha),
     control = list(maxiter = 800, ftol = 0.001836)
   )
 
   yvaluesPredict <- predict(model)
   xvaluesPredict <- ifelse(k == Inf, 0, yvaluesPredict / k)
 
-  xneu <- c(xvaluesPredict, -xvaluesPredict)
-  yneu <- c(yvaluesPredict, -yvaluesPredict)
+  xneu <- c(xvaluesPredict,-xvaluesPredict)
+  yneu <- c(yvaluesPredict,-yvaluesPredict)
   tabe <- data.frame(xneu, yneu)
 
   hab <- data.frame(summary(model)$parameters)
@@ -32,6 +35,11 @@ fitModel <- function(ellipse, freq, a1 = 1, a2 = 1, alpha = 1) {
   k <- sin(ang * pi / 180) / cos(ang * pi / 180)
 
   output <- list()
+
+  output$coords <- c(x, y)
+
+  output$xvalues <- xvalues
+  output$yvalues <- yvalues
 
   output$values <- data.frame(Names = c("a1", "a2", "alpha"),
                               Values = hab)

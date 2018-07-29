@@ -1,27 +1,22 @@
 #' @export
-plotEllipse <- function(ellipse,
-                        freq = 2,
-                        ellipseModel = NULL) {
-  ellipse <- dplyr::filter(ellipse, frequency == freq)
+plotEllipse <- function(ellipseModel) {
 
-
-  X <- c(ellipse[, "X"],-ellipse[, "X"])
-  Y <- c(ellipse[, "Y"],-ellipse[, "Y"])
+  X <- c(ellipseModel$xvalues, -ellipseModel$xvalues)
+  Y <- c(ellipseModel$yvalues, -ellipseModel$yvalues)
 
   output <-
-    ggplot2:qplot(
+    ggplot2::qplot(
       X,
       Y,
-      main = paste(freq, "Hz"),
-      xlab = "M-cone contrast",
-      ylab = "L-cone contrast",
+      # main = paste(freq, "Hz"),
+      xlab = ellipseModel$coords[1],
+      ylab = ellipseModel$coords[2],
       aps = 1
     ) +
-    geom_point() +
-    geom_hline(aes(yintercept = 0)) +
-    geom_vline(aes(yintercept = 0))
+    ggplot2::geom_point() +
+    ggplot2::geom_hline(aes(yintercept = 0)) +
+    ggplot2::geom_vline(aes(xintercept = 0))
 
-  if (!is.null(ellipseModel)) {
     yr <- c()
     xr <- c()
 
@@ -52,8 +47,7 @@ plotEllipse <- function(ellipse,
     yr2 <- c(yr, -yr)
     output <-
       output +
-      geom_lines(aes(x = xr2, y = yr2), color = "red")
-  }
+      ggplot2::geom_line(aes(x = xr2, y = yr2), color = "red")
 
   print(output)
 
