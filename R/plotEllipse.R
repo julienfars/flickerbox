@@ -11,11 +11,11 @@ plotEllipse <- function(ellipseModel) {
       # main = paste(freq, "Hz"),
       xlab = ellipseModel$coords[1],
       ylab = ellipseModel$coords[2],
-      aps = 1
+      asp = 1
     ) +
     ggplot2::geom_point() +
-    ggplot2::geom_hline(aes(yintercept = 0)) +
-    ggplot2::geom_vline(aes(xintercept = 0))
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 0)) +
+    ggplot2::geom_vline(ggplot2::aes(xintercept = 0))
 
     yr <- c()
     xr <- c()
@@ -47,7 +47,7 @@ plotEllipse <- function(ellipseModel) {
     yr2 <- c(yr, -yr)
     output <-
       output +
-      ggplot2::geom_line(aes(x = xr2, y = yr2), color = "red")
+      ggplot2::geom_line(ggplot2::aes(x = xr2, y = yr2), color = "red")
 
   print(output)
 
