@@ -1,5 +1,7 @@
 read.flimmerkiste <- function(filename, ConeFund)
 {
+  filename <- normalizePath(filename, winslash = "/")
+
   rt <-
     read.table(
       filename,
@@ -37,9 +39,17 @@ read.flimmerkiste <- function(filename, ConeFund)
   phase[phase == 0] <- 1
   freq <- as.vector(unlist(freq))
 
-  thresholdsLED <-
-    rbind(D = rt[which(grepl("Down: Schwelle", rt[, 1])), 3:6] * phase,
-          U = rt[which(grepl("Up: Schwelle", rt[, 1])), 3:6] * phase)
+  if ((sum(grepl("Down: Schwelle", rt[, 1])) > 0) &
+      (sum(grepl("Up: Schwelle", rt[, 1])) > 0))
+  {
+    thresholdsLED <-
+      rbind(D = rt[which(grepl("Down: Schwelle", rt[, 1])), 3:6] * phase,
+            U = rt[which(grepl("Up: Schwelle", rt[, 1])), 3:6] * phase)
+  } else
+  {
+    thresholdsLED <- rbind(D = rep(NA, 4),
+                           U = rep(NA, 4))
+  }
 
   LEDcontrast <- apply(thresholdsLED, 2, mean)
 
