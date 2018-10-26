@@ -4,8 +4,8 @@
 \alias{fitEllipse}
 \title{Fits an ellipse model to data from getPhotoreceptorCoordinates}
 \usage{
-fitEllipse(photoreceptorCoordinates, x = "lcone", y = "mcone", a1 = 1,
-  a2 = 1, alpha = 1)
+fitEllipse(photoreceptorCoordinates, x = "lcone", y = "mcone",
+  a1 = 1, a2 = 1, alpha = 1)
 }
 \description{
 Fits an ellipse model to data from getPhotoreceptorCoordinates
