@@ -2,6 +2,8 @@ read.flimmerkiste <- function(filename, ConeFund)
 {
   filename <- normalizePath(filename, winslash = "/")
 
+  filedLoaded <- TRUE
+
   rt <-
     read.table(
       filename,
@@ -12,7 +14,8 @@ read.flimmerkiste <- function(filename, ConeFund)
     ) %>%
     dplyr::select(-7,-12)
 
-
+if(filedLoaded)
+{
   dat <- strsplit(filename, split = "/")[[1]]
   dat <- dat[length(dat)]
   dat <- strsplit(substr(dat, 1, nchar(dat) - 4), split = "_")[[1]]
@@ -62,6 +65,7 @@ read.flimmerkiste <- function(filename, ConeFund)
       findPhotoreceptorContrasts(LEDcontrast, lmean, ConeFund)
     )
   )
+}
 
 }
 
@@ -93,8 +97,18 @@ getPhotoreceptorCoordinates <- function(path = ".", ConeFund) {
 
   for (i in 1:length(dateien)) {
     fname <- normalizePath(paste(path, dateien[i], sep = "/"))
-    erg[[i]] <- read.flimmerkiste(fname, ConeFund)
+    print(fname)
+    tryCatch(
+      erg[[i]] <- read.flimmerkiste(fname, ConeFund),
+      error = function(e)
+      {
+        warning(paste(fname, "was not loaded correctly."))
+        print(e)
+      }
+    )
   }
+
+  stopifnot(length(erg) > 0)
 
   erg <- do.call(rbind, erg)
 
