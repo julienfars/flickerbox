@@ -49,6 +49,6 @@ plotEllipse <- function(ellipseModel) {
       output +
       ggplot2::geom_path(ggplot2::aes(x = xr2, y = yr2), color = "red")
 
-  print(output)
+  return(output)
 
 }
