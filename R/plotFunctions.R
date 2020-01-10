@@ -100,11 +100,13 @@ plotLM.resultList <- function(rList) {
 
 ##### plotResults #####
 
+#' @export
+
 plot.sensitivityList <- function(slist) {
 
-  slist %>%
-    filter(!is.na(sensitivity)) %>%
-    ggplot(aes(x = frequency, y = sensitivity)) +
+  slist <- slist[!is.na(slist$sensitivity), ]
+
+  ggplot(slist, aes(x = frequency, y = sensitivity)) +
     geom_line(aes(group = 1)) +
     geom_point(aes(shape = factor(term))) +
     scale_x_log10() +

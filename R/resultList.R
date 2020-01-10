@@ -8,26 +8,19 @@
 
 resultList <- function(pfad = ".") {
 
-  getResultFileList <-function (pfad=".") {
-    # Return a list of result files in the directory path
-    dname <- paste("_O([[:upper:]]{1})_201([[:digit:]]{1})-([[:digit:]]{2})-([[:digit:]]{2})_([[:alnum:]]*)\\.txt",sep="")
-    dateien <- list.files(path=pfad,pattern=dname)
-    return(dateien)
-  }
+  dateien <- getResultFileList(normalizePath(pfad))
 
-  dateien <- getResultFileList(pfad)
   if (length(dateien) == 0) {
     warning(paste("No data in folder \"", pfad, "\"", sep = ""))
     erg <- NA
-    class(erg) <- "resultListL4S"
+    class(erg) <- "resultList"
     return(erg)
   }
 
   erg <- list()
 
   for (i in 1:length(dateien)) {
-    fname <- normalizePath(paste(pfad, dateien[i], sep = "/"))
-    erg[[i]] <- resultFile(fname, presets)
+    erg[[i]] <- resultFile(dateien[i], presets)
   }
 
   class(erg) <- append(class(erg), "resultList")

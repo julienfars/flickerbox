@@ -20,9 +20,9 @@ sensitivityList.default <- function(x) {
 #' @export
 sensitivityList.character <- function(path = ".") {
 
-  path %>%
-    resultList() %>%
-    sensitivityList()
+  resultList(
+    sensitivityList(path)
+  )
 
 }
 

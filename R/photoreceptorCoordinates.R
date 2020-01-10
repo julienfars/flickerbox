@@ -1,21 +1,16 @@
+#' Alternative method for reading result files.
+#'
+#' THis function reads a results file and calculates photoreceptor contrasts.
+#' @param filename path to a result files
+#' @param ConeFund cone fundamentals to be used
+#' @return a table with contrasts at threshold at the photoreceptor level
+#' @export
+
 read.flimmerkiste <- function(filename, ConeFund)
 {
-  filename <- normalizePath(filename, winslash = "/")
+  # read the resultFile into a table, shared with resultFile.R
+  rt <- read.resultFile(filename)
 
-  filedLoaded <- TRUE
-
-  rt <-
-    read.table(
-      filename,
-      skip = 4,
-      sep = ";",
-      dec = ",",
-      fill = T
-    ) %>%
-    dplyr::select(-7,-12)
-
-if(filedLoaded)
-{
   dat <- strsplit(filename, split = "/")[[1]]
   dat <- dat[length(dat)]
   dat <- strsplit(substr(dat, 1, nchar(dat) - 4), split = "_")[[1]]
@@ -65,7 +60,6 @@ if(filedLoaded)
       findPhotoreceptorContrasts(LEDcontrast, lmean, ConeFund)
     )
   )
-}
 
 }
 
@@ -78,13 +72,6 @@ if(filedLoaded)
 #' @export
 
 getPhotoreceptorCoordinates <- function(path = ".", ConeFund) {
-
-  getResultFileList <-function (pfad=".") {
-    # Return a list of result files in the directory path
-    dname <- paste("_O([[:upper:]]{1})_201([[:digit:]]{1})-([[:digit:]]{2})-([[:digit:]]{2})_([[:alnum:]]*)\\.txt",sep="")
-    dateien <- list.files(path=pfad,pattern=dname)
-    return(dateien)
-  }
 
   dateien <- getResultFileList(path)
   if (length(dateien) == 0) {

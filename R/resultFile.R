@@ -17,24 +17,18 @@ resultFile <- function(name, presets = flickerbox::presets) {
   type <- NA
   treatNA = "keep"
 
-  # Read a result file
-  rt <-
-    read.table(
-      name,
-      skip = 4,
-      sep = ";",
-      dec = ",",
-      fill = T
-    ) %>%
-    dplyr::select(-7,-12)
+  # read the resultFile into a table, shared with photoreceptorCoordinates.R
+  rt <- read.resultFile(name)
 
   # Read contrasts
-
   kontraste <- rt[rt[, 1] == "Delta Kontrast SC1", 3:10]
 
-  if (sum(kontraste[1:4]) == 0) {
+  if (sum(kontraste[1:4]) == 0)
+  {
     kontraste <- kontraste[5:8]
-  } else {
+  }
+  else
+  {
     kontraste <- kontraste[1:4]
   }
 
@@ -85,6 +79,7 @@ resultFile <- function(name, presets = flickerbox::presets) {
 
   thresholdsPR <-
     data.frame(thresholdsLED, apply(thresholdsLED, 1, max) * maxContrast / 100)
+
   sensitivities <-
     data.frame(thresholdsPR,
                Sensitivity = 1 / thresholdsPR[, 5],
@@ -121,7 +116,14 @@ resultFile <- function(name, presets = flickerbox::presets) {
   resultTab$sensitivity <-
     ifelse (is.na(type), NA, mean(sensitivities[, 6]))
 
-  resultTab$numberOfQuestions <- sum(seen) + sum(notSeen)
+  if (length(na.omit(rt[, 2])) == 0)
+  {
+    resultTab$numberOfQuestions <- 0
+  }
+  else
+  {
+    resultTab$numberOfQuestions <- sum(seen) + sum(notSeen)
+  }
 
   class(resultTab) <- append(class(resultTab), "resultFile")
 

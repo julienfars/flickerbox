@@ -12,6 +12,6 @@ getResultFileList <-
         "_O([[:upper:]]{1})_201([[:digit:]]{1})-([[:digit:]]{2})-([[:digit:]]{2})_([[:alnum:]]*)\\.txt",
         sep = ""
       )
-    dateien <- list.files(path = path, pattern = dname)
+    dateien <- list.files(path = normalizePath(path), pattern = dname, full.names = TRUE)
     return(dateien)
   }
