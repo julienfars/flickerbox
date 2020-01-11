@@ -22,6 +22,7 @@ LED contrasts that result in the desired contrasts at the photoreceptor level
 Calculates the LED contrast that result in a pursued contrast at the photoreceptor level, given certain time-averaged LED illuminances and given cone fundamentals.
 }
 \examples{
+\dontrun{
 #### set given values
 ## mean luminance of primaries
 lmean <- c(red = 20, green = 40, blue = 3, cyan = 20)
@@ -32,4 +33,5 @@ LEDcontrast100 <- findLEDContrasts(pursuedContr, lmean, ConeFund)
 # Calculate the maximal photoreceptor contrast this results in
 maxContrast <- findPhotoreceptorContrasts(LEDcontrast100, lmean, ConeFund)
 createPresetFile("mcone", "außen", LEDcontrast100, c(20, 40, 3, 20), lmean)
+}
 }

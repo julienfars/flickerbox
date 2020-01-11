@@ -13,7 +13,9 @@
 Creates a sensitivity list from raw data
 }
 \examples{
+\dontrun{
 rl <- resultList(".")
 sl <- sensitivityList(rl)
 print(sl)
+}
 }

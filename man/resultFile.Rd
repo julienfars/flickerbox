@@ -18,6 +18,8 @@ an object of the type "resultFile"
 Use this function to read a single result file. Such a file contains all stimuli presented, the corresponding answers, and two thresholds. One threshold is from the up-, the other one from the down-staircase).
 }
 \examples{
+\dontrun{
 # Get the maximal possible contrast at the photoreceptor level for this measurement (instrument gamut)
 maxContrast <- resultFile("pathToFile")$maxContrast
+}
 }

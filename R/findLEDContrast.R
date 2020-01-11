@@ -6,16 +6,19 @@
 #' @param ConeFund cone funamentals to be used
 #' @param maxContrast use the maximal contrasts at the photoreceptor levels that can be achieved technically while keeping the contrast ratios from pursuedContrast constant?
 #' @return LED contrasts that result in the desired contrasts at the photoreceptor level
-#' @examples #### set given values
-#' @examples ## mean luminance of primaries
-#' @examples lmean <- c(red = 20, green = 40, blue = 3, cyan = 20)
-#' @examples ## create M-cone isolating stimlui
-#' @examples pursuedContr <- c(rod = 0, scone = 0, mcone = 20, lcone = 0)
-#' @examples ## Find LED contrast that result in pursued contrasts
-#' @examples LEDcontrast100 <- findLEDContrasts(pursuedContr, lmean, ConeFund)
-#' @examples # Calculate the maximal photoreceptor contrast this results in
-#' @examples maxContrast <- findPhotoreceptorContrasts(LEDcontrast100, lmean, ConeFund)
-#' @examples createPresetFile("mcone", "außen", LEDcontrast100, c(20, 40, 3, 20), lmean)
+#' @examples
+#' \dontrun{
+#' #### set given values
+#' ## mean luminance of primaries
+#' lmean <- c(red = 20, green = 40, blue = 3, cyan = 20)
+#' ## create M-cone isolating stimlui
+#' pursuedContr <- c(rod = 0, scone = 0, mcone = 20, lcone = 0)
+#' ## Find LED contrast that result in pursued contrasts
+#' LEDcontrast100 <- findLEDContrasts(pursuedContr, lmean, ConeFund)
+#' # Calculate the maximal photoreceptor contrast this results in
+#' maxContrast <- findPhotoreceptorContrasts(LEDcontrast100, lmean, ConeFund)
+#' createPresetFile("mcone", "außen", LEDcontrast100, c(20, 40, 3, 20), lmean)
+#' }
 #' @export
 
 findLEDContrasts <- function(pursuedContr, lmean, ConeFund, maxContrast = T) {

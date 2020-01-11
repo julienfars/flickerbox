@@ -5,8 +5,10 @@
 #' @param presets presets that are used for identifying conditions and calculating sensitivities
 #' @return an object of the type "resultFile"
 #' @examples
+#' \dontrun{
 #' # Get the maximal possible contrast at the photoreceptor level for this measurement (instrument gamut)
 #' maxContrast <- resultFile("pathToFile")$maxContrast
+#' }
 #' @export
 
 resultFile <- function(name, presets = flickerbox::presets) {

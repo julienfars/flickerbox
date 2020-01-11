@@ -4,8 +4,7 @@ Title: Functions for creating stimuli and analyzing results for a 4-channel-LED-
 Version: 0.1.0
 Author: Cord Huchzermeyer
 Maintainer: Cord Huchzermeyer <huchzi@email.de>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Flickerbox is used for calculating silent substitution stimuli, as well as analyzing and plotting results from psychophysical measurements based one these stimuli.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
