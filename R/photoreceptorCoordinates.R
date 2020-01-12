@@ -18,24 +18,34 @@ read.flimmerkiste <- function(filename, ConeFund)
   seye <- dat[length(dat) - 2]
   date_of_exam <-  strptime(paste(dat[length(dat) - 1], dat[length(dat)]), "%Y-%m-%d %H%M%S")
 
-  if(sum(rt[4:5, 3:6]) == 0) field <- "surround" else field <- "center"
+  if (sum(grepl("Helligkeit", rt$category)) != 1) stop("No information on luminance.")
+  if (sum(grepl("Phase", rt$category)) != 1) stop("No information on phase.")
 
-  if(field == "surround")
-  {
-    lmean <- c(rt[1, 7:10])
-    phase <- c(rt[3, 7:10])
-    freq <- c(rt[2, 7:10])
+  if(sum(rt[4:5, 3:6]) == 0) {
+    field <- "surround"
+    index <- c("surround_red", "surround_green", "surround_blue", "surround_cyan")
   }
   else {
-    lmean <- c(rt[1, 3:6])
-    phase <- c(rt[3, 3:6])
-    freq <- c(rt[2, 3:6])
+    field <- "center"
+    index <- c("center_red", "center_green", "center_blue", "center_cyan")
   }
+
+  lmean <- c(rt[rt$category == "Helligkeit", index])
+  phase <- c(rt[rt$category == "Phase", index])
+
+  if (sum(grepl("Frequenz", rt$category)) != 1) {
+    freq <- NA
+  }
+  else {
+    freq <- c(rt[rt$category == "Frequenz", index])
+    freq <- as.vector(unlist(freq))
+    freq <- max(freq)
+  }
+
   lmean <- as.vector(unlist(lmean))
   phase <- as.vector(unlist(phase))
   phase[phase == 180] <- -1
   phase[phase == 0] <- 1
-  freq <- as.vector(unlist(freq))
 
   if ((sum(grepl("Down: Schwelle", rt[, 1])) > 0) &
       (sum(grepl("Up: Schwelle", rt[, 1])) > 0))
@@ -56,7 +66,7 @@ read.flimmerkiste <- function(filename, ConeFund)
       patid,
       seye,
       date_of_exam,
-      frequency = max(freq),
+      frequency = freq,
       findPhotoreceptorContrasts(LEDcontrast, lmean, ConeFund)
     )
   )
@@ -71,7 +81,10 @@ read.flimmerkiste <- function(filename, ConeFund)
 #' @return a table with contrasts at threshold at the photoreceptor level
 #' @export
 
-getPhotoreceptorCoordinates <- function(path = ".", ConeFund) {
+getPhotoreceptorCoordinates <- function(path = ".", ConeFund = NA) {
+
+  if(path == ".") sprintf("Using working directory: %s", getwd())
+  stopifnot(!is.na(ConeFund))
 
   dateien <- getResultFileList(path)
   if (length(dateien) == 0) {
@@ -83,8 +96,8 @@ getPhotoreceptorCoordinates <- function(path = ".", ConeFund) {
   erg <- list()
 
   for (i in 1:length(dateien)) {
-    fname <- normalizePath(paste(path, dateien[i], sep = "/"))
-    print(fname)
+    fname <- normalizePath(dateien[i])
+
     tryCatch(
       erg[[i]] <- read.flimmerkiste(fname, ConeFund),
       error = function(e)
@@ -95,7 +108,11 @@ getPhotoreceptorCoordinates <- function(path = ".", ConeFund) {
     )
   }
 
-  stopifnot(length(erg) > 0)
+  if(length(erg) < 1) {
+    warning(paste("No data in folder \"", path, "\"", sep = ""))
+    erg <- NA
+    return(erg)
+  }
 
   erg <- do.call(rbind, erg)
 

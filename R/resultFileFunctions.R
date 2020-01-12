@@ -1,14 +1,5 @@
 ##### function summary() for resultFile #####
 
-summary.resultFile <- function(rfile) {
-  print(rfile$name)
-}
-
-print.resultFile <- function(rfile) {
-  rfile %>%
-    getBasics() %>%
-    print()
-}
 
 ##### function getBasics() #####
 # Extract data from name

@@ -1,0 +1,8 @@
+Signal aktiv;;True;True;True;True;;True;True;True;True;
+Signalform;;Sinus;Sinus;Sinus;Sinus;;Sinus;Sinus;Sinus;Sinus;
+Frequenz;;1;1;1;1;;2;2;2;2;
+Phase;;0;0;0;0;;0;180;180;0;
+Kontrast SC1;;0;0;0;0;;100;8,4375;0,3125;3,125;
+Kontrast SC2;;0;0;0;0;;0;0;0;0;
+Delta Kontrast SC1;;0;0;0;0;;20;1,6875;0,0625;0,625;
+Delta Kontrast SC2;;0;0;0;0;;20;1,6875;0,0625;0,625;

@@ -12,18 +12,18 @@
 #' @export
 
 resultFile <- function(name, presets = flickerbox::presets) {
+
   # Define constants
   modulation <- 1:4
   phase <- 5:8
   zero <- rep(0, 4)
-  type <- NA
   treatNA = "keep"
 
   # read the resultFile into a table, shared with photoreceptorCoordinates.R
   rt <- read.resultFile(name)
 
   # Read contrasts
-  kontraste <- rt[rt[, 1] == "Delta Kontrast SC1", 3:10]
+  kontraste <- rt[rt$category == "Delta Kontrast SC1", 3:10]
 
   if (sum(kontraste[1:4]) == 0)
   {
@@ -34,12 +34,12 @@ resultFile <- function(name, presets = flickerbox::presets) {
     kontraste <- kontraste[1:4]
   }
 
-  Kontrast100 <- which.max(rt[rt$V1 == "Kontrast SC1",])
+  Kontrast100 <- which.max(rt[rt$category == "Kontrast SC1",])
 
   # Determine frequency
 
   freq <- rt[which(grepl("Frequenz", rt[, 1])),
-             which.max(rt[rt$V1 == "Kontrast SC1",])]
+             which.max(rt[rt$category == "Kontrast SC1",])]
 
   # Determine photoreceptor type
 
@@ -97,8 +97,8 @@ resultFile <- function(name, presets = flickerbox::presets) {
     "Term"
   )
 
-  notSeen <- rt[, 2] == "nicht gesehen"
-  seen <- rt[, 2] == "gesehen"
+  notSeen <- rt$response == "nicht gesehen"
+  seen <- rt$response == "gesehen"
 
   # Create resultTab list
   resultTab <- list()
@@ -118,7 +118,7 @@ resultFile <- function(name, presets = flickerbox::presets) {
   resultTab$sensitivity <-
     ifelse (is.na(type), NA, mean(sensitivities[, 6]))
 
-  if (length(na.omit(rt[, 2])) == 0)
+  if (length(na.omit(rt$response)) == 0)
   {
     resultTab$numberOfQuestions <- 0
   }
@@ -130,4 +130,13 @@ resultFile <- function(name, presets = flickerbox::presets) {
   class(resultTab) <- append(class(resultTab), "resultFile")
 
   return(resultTab)
+}
+
+#' @export
+print.resultFile <- function(rfile) {
+  output <- getBasics(rfile)
+  sprintf("Contains data from subject %s, eye: %s, measured at %s.",
+          output$subject,
+          output$eye,
+          output$dateTime)
 }

@@ -4,7 +4,7 @@
 \alias{getPhotoreceptorCoordinates}
 \title{Calculates the contrasts at threshold for the different photoreceptor levels}
 \usage{
-getPhotoreceptorCoordinates(path = ".", ConeFund)
+getPhotoreceptorCoordinates(path = ".", ConeFund = NA)
 }
 \arguments{
 \item{path}{path to a directory containing multiple result files}

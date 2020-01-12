@@ -1,7 +1,7 @@
 Package: flickerbox
 Type: Package
 Title: Functions for creating stimuli and analyzing results for a 4-channel-LED-stimulator
-Version: 0.1.0
+Version: 0.2.0
 Author: Cord Huchzermeyer
 Maintainer: Cord Huchzermeyer <huchzi@email.de>
 Description: Flickerbox is used for calculating silent substitution stimuli, as well as analyzing and plotting results from psychophysical measurements based one these stimuli.
