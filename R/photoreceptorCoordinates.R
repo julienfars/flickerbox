@@ -84,6 +84,7 @@ read.flimmerkiste <- function(filename, ConeFund)
 getPhotoreceptorCoordinates <- function(path = ".", ConeFund = NA) {
 
   if(path == ".") sprintf("Using working directory: %s", getwd())
+
   stopifnot(!is.na(ConeFund))
 
   dateien <- getResultFileList(path)
