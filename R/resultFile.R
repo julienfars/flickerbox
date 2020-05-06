@@ -62,7 +62,7 @@ resultFile <- function(name, presets = flickerbox::presets) {
   }
 
   # Determine the method used 
-  if(rt[8,1]=="Strategie:") {
+  if(any(rt=="Strategie:")) {
     set_Method <- "BP"
     } else {
     set_Method <- "SC"
