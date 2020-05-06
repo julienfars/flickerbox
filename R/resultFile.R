@@ -61,10 +61,22 @@ resultFile <- function(name, presets = flickerbox::presets) {
     maxContrast <- presets[presets$X == "K", type]
   }
 
+  # Determine the method used 
+  if(rt[8,1]=="Strategie:") {
+    set_Method <- "BP"
+    } else {
+    set_Method <- "SC"
+    }
+  
+  if (set_Method == "SC"){
   thresholdsLED <-
     rbind(D = rt[which(grepl("Down: Schwelle", rt[, 1])), 3:6],
           U = rt[which(grepl("Up: Schwelle", rt[, 1])), 3:6])
-
+    } else if (set_Method=="BP") {
+    rbind(D = rt[which(grepl("Strategie: Schwelle", rt[, 1])), 3:6],
+          U = rt[which(grepl("Strategie: Schwelle", rt[, 1])), 3:6])
+    }
+  
   if (nrow(thresholdsLED) == 0) {
     warning("No staircase terminated.")
     termination.status <- 0
