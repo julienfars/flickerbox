@@ -62,12 +62,16 @@ resultFile <- function(name, presets = flickerbox::presets) {
   }
   
   # Determine the method used 
-  if(any(rt=="Strategie:")) {
+  
+  method_finder <- which(grepl("Strategie", rt[,1]))
+  lenght_method_finder <- length(method_finder)
+  
+  if(lenght_method_finder!=0) {
     set_Method <- "BP"
   } else {
     set_Method <- "SC"
   }
-  
+
   if (set_Method == "SC"){
     thresholdsLED <-
       rbind(D = rt[which(grepl("Down: Schwelle", rt[, 1])), 3:6],
