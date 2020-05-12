@@ -117,6 +117,9 @@ resultFile <- function(name, presets = flickerbox::presets) {
   notSeen <- rt$response == "nicht gesehen"
   seen <- rt$response == "gesehen"
   
+  # add the psychometric table and parameters
+  PsiT <- psychometric_table(name)
+  
   # Create resultTab list
   resultTab <- list()
   
@@ -131,6 +134,7 @@ resultFile <- function(name, presets = flickerbox::presets) {
   resultTab$thresholdsPR <- thresholdsPR
   resultTab$terminationStatus <- termination.status
   resultTab$Kontrast100 <- Kontrast100
+  resultTab$PsychometricTable <- PsiT
   
   resultTab$sensitivity <-
     ifelse (is.na(type), NA, mean(sensitivities[, 6]))
