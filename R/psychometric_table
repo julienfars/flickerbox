@@ -1,0 +1,72 @@
+#' Read a single result file
+#'
+#' Use this function to read a single result file. This function returns the psychometric results of the staircase procedure of the the BestPEST procedure 
+#' @param name name of the file
+#' @param presets presets that are used for identifying conditions and calculating sensitivities
+#' @return a table
+#' @examples
+#' \dontrun{
+#' BestPEST_results <- psychometric_table("pathToFile")
+#' }
+#' @export 
+
+psychometric_table <- function(name, presets = flickerbox::presets){
+  rt <- read.resultFile(name)
+  
+  fulltable <- rt[-c(1:7),] #response table
+  
+  # here gesehen added to the last trial and keep the results 
+  row_num <- which(grepl("Down: Schwelle erreicht!", fulltable$category))
+  fulltable[row_num, c(7:10)] <- fulltable[row_num,c(3:6)]
+  fulltable[row_num, 2] <- "gesehen"
+  row_num2 <- which(grepl("Up: Schwelle erreicht!", fulltable$category))
+  fulltable[row_num2, c(7:10)] <- fulltable[row_num,c(3:6)]
+  fulltable[row_num2, 2] <- "gesehen"
+  
+  # must add a part that check which type of stimuli (center or surround)
+  
+  
+  fulltable[,1] <- as.factor(fulltable[,1])
+  #using only the red_surround contrast, because the contrasts are changed proportionally 
+  fulltable <- cbind.data.frame(fulltable[,2], fulltable[,7])
+  colnames(fulltable) <- c("decision", "contrast")
+ 
+  # Here, we find the right used procedure
+  x <- which(grepl("Strategie", rt[,1]))
+  l <- length(x)
+  
+  if(l!=0) {
+    set_Method <- "BP"
+  } else {
+    set_Method <- "SC"
+  }
+  
+  # finally we create the table 
+  if (set_Method == "SC") {
+      if (sum(any(rt=="Up: Schwelle erreicht!"), na.rm = TRUE) == 1){
+        up <- table[which(grepl("Up: Schwelle", table[,1])),3]
+        up <- cbind.data.frame(as.factor("gesehen"), up)
+        colnames(up) <- c("decision", "contrast")
+        fulltable <- rbind.data.frame(fulltable, up)
+      } else if (sum(any(rt=="Up: Schwelle erreicht!"), na.rm = TRUE) == 0){
+     up <- NaN
+    }
+      if (sum(any(rt=="Down: Schwelle erreicht!"), na.rm = TRUE) == 1){
+        down <- table[which(grepl("Down: Schwelle", table[,1])),3]
+        down <- cbind.data.frame(as.factor("gesehen"), down)
+        colnames(down) <- c("decision", "contrast")
+        fulltable <- rbind.data.frame(fulltable, down)
+    } else if (sum(any(rt=="Down: Schwelle erreicht!"), na.rm = TRUE) == 0){
+        down <- NaN
+      }
+  } else if (set_Method == "BP") {
+    if (sum(any(rt=="Strategie"), na.rm = TRUE) > 1){
+      resp <- table[which(grepl("Strategie", table[,1])),3]
+      resp <- cbind.data.frame(as.factor("gesehen"), resp)
+      colnames(resp) <- c("decision", "contrast")
+      fulltable <- rbind.data.frame(fulltable, resp)
+    }
+  }
+  fulltable[,2] <- fulltable[,2]/max(fulltable[,2]) # here the contrasts are comprised between 0 & 1
+  return(fulltable)
+}
