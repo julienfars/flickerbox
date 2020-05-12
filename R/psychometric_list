@@ -21,6 +21,6 @@ psychometric_list <- function(pfad = ".") {
     erg[[i]] <- psychometric_table(dateien[i], presets)
   }
   
-  class(erg) <- append(class(erg))
+  class(erg) <- append(class(erg),"psychometricList")
   return(erg)
 }
