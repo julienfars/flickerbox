@@ -22,7 +22,8 @@ psychometric_table <- function(name, presets = flickerbox::presets){
   row_num2 <- which(grepl("Up: Schwelle erreicht!", fulltable$category))
   fulltable[row_num2, c(7:10)] <- fulltable[row_num,c(3:6)]
   fulltable[row_num2, 2] <- "gesehen"
-  
+  fulltable <- na.omit(fulltable) 
+
   # must add a part that check which type of stimuli (center or surround)
   
   
