@@ -34,7 +34,7 @@ psychometric_table <- function(name, presets = flickerbox::presets){
   # finally we create the table 
   if (set_Method == "SC") {
     if (sum(any(rt=="Up: Schwelle erreicht!"), na.rm = TRUE) == 1){
-      up <- table[which(grepl("Up: Schwelle", table[,1])),3]
+      up <- rt[which(grepl("Up: Schwelle", rt[,1])),3]
       up <- cbind.data.frame(as.factor("gesehen"), up)
       colnames(up) <- c("decision", "contrast")
       fulltable <- rbind.data.frame(fulltable, up)
@@ -42,7 +42,7 @@ psychometric_table <- function(name, presets = flickerbox::presets){
       up <- NaN
     }
     if (sum(any(rt=="Down: Schwelle erreicht!"), na.rm = TRUE) == 1){
-      down <- table[which(grepl("Down: Schwelle", table[,1])),3]
+      down <- rt[which(grepl("Down: Schwelle", rt[,1])),3]
       down <- cbind.data.frame(as.factor("gesehen"), down)
       colnames(down) <- c("decision", "contrast")
       fulltable <- rbind.data.frame(fulltable, down)
@@ -51,7 +51,7 @@ psychometric_table <- function(name, presets = flickerbox::presets){
     }
   } else if (set_Method == "BP") {
     if (sum(any(rt=="Strategie"), na.rm = TRUE) > 1){
-      resp <- table[which(grepl("Strategie", table[,1])),3]
+      resp <- fulltable[which(grepl("Strategie", fulltable[,1])),3]
       resp <- cbind.data.frame(as.factor("gesehen"), resp)
       colnames(resp) <- c("decision", "contrast")
       fulltable <- rbind.data.frame(fulltable, resp)
